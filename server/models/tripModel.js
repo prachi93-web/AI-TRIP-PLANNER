@@ -8,7 +8,7 @@ const tripSchema = new mongoose.Schema({
     days: {type: Number, required: true},
     budget: {type: Number, required: true},
     interests: {type: [String], required: true},
-    aiPlan: {type: String, required: true}
+    aiPlan: { type: Object, required: true }
 });
 
 const tripModel = mongoose.models.trip || mongoose.model("trip", tripSchema);
