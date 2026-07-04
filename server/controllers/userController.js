@@ -7,7 +7,32 @@ import userModel from "../models/userModel.js";
 const createToken = (id) => {
     return jwt.sign({id},process.env.JWT_SECRET)
 }
+//user login api
+const loginUser = async (req,res) => {
+    try {
+        const  {email, password} = req.body;
 
+        //check if user already exists
+        const user = await userModel.findOne({email});
+        if(!user) {
+            return res.json({success:false, message:"User doesn't exists"})
+        }
+
+        //check whether password matches or not
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (isMatch) {
+            const  token = createToken(user._id)
+            res.json({success:true, token})
+        }
+        else {
+            res.json({success:false, message:"Invalid credentials"})
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.json({success:false, message:error.message})
+    }
+}
 //user registration route
 const registerUser = async (req,res) => {
     try {
@@ -49,4 +74,4 @@ const registerUser = async (req,res) => {
     }
 }
 
-export { registerUser }
+export { registerUser, loginUser }
