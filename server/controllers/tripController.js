@@ -60,4 +60,23 @@ const getMyTrips = async (req,res) => {
     }
 }
 
-export { generateTrip, getMyTrips };
+const deleteTrip = async (req,res) => {
+    try {
+
+        const userId = req.userId;
+        const { id } = req.body;
+
+        const trip = await tripModel.findOne({ _id: id, userId });
+        if (!trip) {
+            return res.json({success: false, message:"Trip not Found"});
+        }
+        await trip.deleteOne();
+        res.json({success: true, message:"Trip Deleted Successfully"})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success: false, message: error.message})
+    }
+}
+
+export { generateTrip, getMyTrips, deleteTrip };
