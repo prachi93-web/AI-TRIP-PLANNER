@@ -1,5 +1,5 @@
 import express from 'express'
-import { generateTrip, getMyTrips,deleteTrip } from '../controllers/tripController.js'
+import { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination } from '../controllers/tripController.js'
 import authUser from '../middleware/auth.js'
 
 const tripRouter = express.Router();
@@ -7,6 +7,8 @@ const tripRouter = express.Router();
 tripRouter.post("/generate", authUser, generateTrip);
 tripRouter.get("/list", authUser, getMyTrips);
 tripRouter.post("/delete", authUser, deleteTrip);
+tripRouter.post("/tripDetails", authUser, singleTrip);
+tripRouter.post("/search", authUser, searchDestination);
 
 
 export default tripRouter;

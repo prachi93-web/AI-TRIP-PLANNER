@@ -79,4 +79,43 @@ const deleteTrip = async (req,res) => {
     }
 }
 
-export { generateTrip, getMyTrips, deleteTrip };
+const singleTrip = async (req, res) => {
+    try {
+
+        const userId = req.userId;
+        const { id } = req.body;
+
+        const trip = await tripModel.findOne({_id: id,userId});
+        if (!trip) {
+            return res.json({success: false, message:"Trip not found"});
+        }
+
+        res.json({success: true, trip})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success: false, message: error.message})
+    }
+}
+
+const searchDestination = async (req,res) => {
+    try {
+
+        const {keyword} = req.body;
+        if (!keyword) {
+            return res.json({success: false, message: "Keyword is required"});
+        }
+
+        const destinations = await destinationModel.find({
+            name: { $regex: keyword, $options: "i" }
+        })
+
+        res.json({success: true, destinations})
+
+    } catch (error) {
+        console.log(error);
+        res.json({success: false, message: error.message})
+    }
+}
+
+export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination };
