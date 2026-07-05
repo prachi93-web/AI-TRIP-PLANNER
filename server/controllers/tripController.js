@@ -46,4 +46,18 @@ const generateTrip = async (req, res) => {
     }
 }
 
-export { generateTrip };
+const getMyTrips = async (req,res) => {
+    try {
+    
+        const userId = req.userId;
+
+        const trips = await tripModel.find({userId}).sort({ _id: -1 });
+        res.json({success: true, trips})
+
+    } catch (error) {
+        console.log(error)
+        res.json({success: false, message: error.message})
+    }
+}
+
+export { generateTrip, getMyTrips };
