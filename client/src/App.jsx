@@ -7,6 +7,7 @@ import MyTrips from './pages/MyTrips'
 import TripDetails from './pages/TripDetails'
 import Dashboard from './pages/Dashboard'
 import CreateTrip from './pages/CreateTrip'
+import Profile from './pages/Profile'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
       <Route path='/create-trip' element={<CreateTrip />} />
       <Route path='/my-trips' element={<MyTrips />} />
       <Route path='/trip/:id' element={<TripDetails />} />
+      <Route path='/profile' element={<Profile />} />
     </Routes>
   )
 }
