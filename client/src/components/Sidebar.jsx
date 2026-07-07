@@ -1,5 +1,6 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   LayoutDashboard,
   Plus,
@@ -11,6 +12,7 @@ import {
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     {
@@ -34,6 +36,14 @@ const Sidebar = () => {
       icon: User,
     },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    toast.success("Logged out successfully!");
+
+    navigate("/login");
+  };
 
   return (
     <aside className="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex flex-col justify-between z-40">
@@ -75,7 +85,10 @@ const Sidebar = () => {
 
           {/* Logout */}
 
-          <button className="w-full mt-2 flex items-center gap-4 px-5 py-3 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition">
+          <button
+            onClick={handleLogout}
+            className="w-full mt-2 flex items-center gap-4 px-5 py-3 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition"
+          >
             <LogOut size={20} />
 
             <span>Logout</span>
@@ -90,7 +103,9 @@ const Sidebar = () => {
           Let AI plan your perfect trip ✨
         </h3>
 
-        <p className="text-sm text-gray-600 mt-2">Smart, Fast and Easy.</p>
+        <p className="text-sm text-gray-600 mt-2">
+          Smart, Fast and Easy.
+        </p>
       </div>
     </aside>
   );

@@ -8,19 +8,26 @@ import TripDetails from './pages/TripDetails'
 import Dashboard from './pages/Dashboard'
 import CreateTrip from './pages/CreateTrip'
 import Profile from './pages/Profile'
+import ProtectedRoute from './components/ProtectedRoute'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
   return (
+    <>
+     <ToastContainer />
     <Routes>
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
-      <Route path='/dashboard' element={<Dashboard />} />
-      <Route path='/create-trip' element={<CreateTrip />} />
-      <Route path='/my-trips' element={<MyTrips />} />
-      <Route path='/trip/:id' element={<TripDetails />} />
-      <Route path='/profile' element={<Profile />} />
+      <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path='/create-trip' element={<ProtectedRoute><CreateTrip /></ProtectedRoute>} />
+      <Route path='/my-trips' element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />
+      <Route path='/trip/:id' element={<ProtectedRoute><TripDetails /></ProtectedRoute>} />
+      <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
     </Routes>
+  </>
   )
 }
 

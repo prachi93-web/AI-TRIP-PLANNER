@@ -1,18 +1,68 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { Plane, Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/user/login`,
+        formData,
+      );
+
+      if (response.data.success) {
+        // Save Token
+        localStorage.setItem("token", response.data.token);
+
+        // Success Toast
+        toast.success("Login Successful!");
+
+        // Clear Form
+        setFormData({
+          email: "",
+          password: "",
+        });
+
+        // Navigate
+        navigate("/dashboard");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-5 background-color: bg-white"
-      // style={{
-      //   background:
-      //     "linear-gradient(135deg, #ffffff 0%, #faf5ff 45%, #f3e8ff 100%)",
-      // }}
-    >
+    <div className="min-h-screen flex items-center justify-center px-5 bg-white">
       <div className="w-full max-w-md">
         {/* Back Button */}
 
@@ -47,7 +97,7 @@ const Login = () => {
 
           {/* Form */}
 
-          <form className="mt-10 space-y-6">
+          <form onSubmit={handleSubmit} className="mt-10 space-y-6">
             {/* Email */}
 
             <div>
@@ -60,8 +110,12 @@ const Login = () => {
 
                 <input
                   type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="Enter your email"
                   className="flex-1 ml-3 bg-transparent outline-none text-sm"
+                  required
                 />
               </div>
             </div>
@@ -78,8 +132,12 @@ const Login = () => {
 
                 <input
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="Enter your password"
                   className="flex-1 ml-3 bg-transparent outline-none text-sm"
+                  required
                 />
 
                 <button
@@ -107,9 +165,10 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full h-12 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-semibold transition shadow-lg"
+              disabled={loading}
+              className="w-full h-12 rounded-xl bg-purple-700 hover:bg-purple-800 text-white font-semibold transition shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Login
+              {loading ? "Logging In..." : "Login"}
             </button>
           </form>
 

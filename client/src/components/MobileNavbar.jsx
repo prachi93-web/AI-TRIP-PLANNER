@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Menu,
   X,
@@ -15,6 +16,7 @@ const MobileNavbar = () => {
   const [open, setOpen] = useState(false);
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = [
     {
@@ -38,6 +40,16 @@ const MobileNavbar = () => {
       icon: <User size={20} />,
     },
   ];
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+
+    setOpen(false);
+
+    toast.success("Logged out successfully!");
+
+    navigate("/login");
+  };
 
   return (
     <>
@@ -107,8 +119,7 @@ const MobileNavbar = () => {
               key={item.path}
               to={item.path}
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl mb-2 transition
-              ${
+              className={`flex items-center gap-4 px-4 py-3 rounded-xl mb-2 transition ${
                 location.pathname === item.path
                   ? "bg-purple-100 text-purple-700 font-semibold"
                   : "text-gray-700 hover:bg-gray-100"
@@ -116,15 +127,18 @@ const MobileNavbar = () => {
             >
               {item.icon}
 
-              {item.name}
+              <span>{item.name}</span>
             </Link>
           ))}
         </div>
 
-        {/* Bottom */}
+        {/* Logout */}
 
         <div className="absolute bottom-8 left-4 right-4">
-          <button className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition"
+          >
             <LogOut size={18} />
             Logout
           </button>
