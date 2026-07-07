@@ -36,11 +36,13 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col justify-between">
+    <aside className="fixed top-0 left-0 w-64 h-screen bg-white border-r border-gray-200 flex flex-col justify-between z-40">
+      {/* Top */}
+
       <div>
         {/* Logo */}
 
-        <div className="flex items-center gap-3 px-7 py-8">
+        <div className="flex items-center gap-3 px-7 py-8 border-b border-gray-100">
           <Plane size={28} className="text-purple-700 rotate-45" />
 
           <h2 className="text-2xl font-bold">
@@ -50,7 +52,7 @@ const Sidebar = () => {
 
         {/* Menu */}
 
-        <div className="px-4 space-y-2">
+        <div className="px-4 py-5 space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
 
@@ -66,7 +68,7 @@ const Sidebar = () => {
               >
                 <Icon size={20} />
 
-                {item.name}
+                <span>{item.name}</span>
               </Link>
             );
           })}
@@ -75,7 +77,8 @@ const Sidebar = () => {
 
           <button className="w-full mt-2 flex items-center gap-4 px-5 py-3 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition">
             <LogOut size={20} />
-            Logout
+
+            <span>Logout</span>
           </button>
         </div>
       </div>
@@ -89,7 +92,7 @@ const Sidebar = () => {
 
         <p className="text-sm text-gray-600 mt-2">Smart, Fast and Easy.</p>
       </div>
-    </div>
+    </aside>
   );
 };
 

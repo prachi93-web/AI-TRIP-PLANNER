@@ -39,9 +39,7 @@ const CreateTrip = () => {
   };
 
   const removeInterest = (interest) => {
-    setSelectedInterests(
-      selectedInterests.filter((item) => item !== interest)
-    );
+    setSelectedInterests(selectedInterests.filter((item) => item !== interest));
   };
 
   const handleSubmit = (e) => {
@@ -52,23 +50,26 @@ const CreateTrip = () => {
       interests: selectedInterests,
     });
 
-    // Call Generate Trip API here
+    // Generate Trip API
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Desktop Sidebar */}
+
       <div className="hidden lg:block">
         <Sidebar />
       </div>
 
       {/* Mobile Navbar */}
+
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50">
         <MobileNavbar />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 pb-8">
+
+      <div className="lg:ml-64 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 pb-8">
         <div className="w-full max-w-5xl mx-auto bg-white rounded-2xl border border-gray-200 shadow-sm p-5 sm:p-7 lg:p-10">
           {/* Heading */}
 
@@ -86,8 +87,6 @@ const CreateTrip = () => {
             {/* Row 1 */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
-              {/* Destination */}
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Destination
@@ -102,8 +101,6 @@ const CreateTrip = () => {
                   className="w-full h-12 px-4 rounded-xl border border-gray-300 outline-none focus:border-purple-600"
                 />
               </div>
-
-              {/* Days */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -124,8 +121,6 @@ const CreateTrip = () => {
             {/* Row 2 */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:gap-6">
-              {/* Budget */}
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Budget (INR)
@@ -140,8 +135,6 @@ const CreateTrip = () => {
                   className="w-full h-12 px-4 rounded-xl border border-gray-300 outline-none focus:border-purple-600"
                 />
               </div>
-
-              {/* Start Date */}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -205,7 +198,7 @@ const CreateTrip = () => {
 
                   <ChevronDown
                     size={18}
-                    className={`ml-auto text-gray-500 transition-transform ${
+                    className={`ml-auto transition-transform ${
                       showDropdown ? "rotate-180" : ""
                     }`}
                   />

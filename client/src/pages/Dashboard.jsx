@@ -14,7 +14,7 @@ const Dashboard = () => {
     .toUpperCase();
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Desktop Sidebar */}
 
       <div className="hidden lg:block">
@@ -29,7 +29,7 @@ const Dashboard = () => {
 
       {/* Main Content */}
 
-      <div className="flex-1 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 pb-8">
+      <div className="lg:ml-64 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 pb-8">
         {/* Header */}
 
         <div className="flex justify-between items-center">
@@ -43,7 +43,7 @@ const Dashboard = () => {
             </p>
           </div>
 
-          {/* Show avatar only on desktop */}
+          {/* Desktop Avatar */}
 
           <div className="hidden lg:flex w-12 h-12 rounded-full bg-purple-700 text-white items-center justify-center text-xl font-semibold shadow-md">
             {initials}
