@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Sidebar from "../components/Sidebar";
 import MobileNavbar from "../components/MobileNavbar";
+import axios from "axios";
 import {
   User,
   Mail,
@@ -15,15 +16,38 @@ import {
 
 const Profile = () => {
   const navigate = useNavigate();
+  const getProfile = async () => {
+  try {
+    setLoading(true);
 
-  const user = {
-    name: "Prachi Mehetre",
-    email: "prachi@gmail.com",
-    totalTrips: 5,
-    upcomingTrips: 2,
-  };
+    const response = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/trip/profile`,
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      }
+    );
 
-  const initials = user.name
+    if (response.data.success) {
+      setUser(response.data.profile);
+    } else {
+      toast.error(response.data.message);
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
+useEffect(() => {
+  getProfile();
+}, []);
+  const [user, setUser] = useState(null);
+const [loading, setLoading] = useState(true);
+
+  const initials = user?.name
     .split(" ")
     .map((word) => word[0])
     .join("")
@@ -36,7 +60,19 @@ const Profile = () => {
 
     navigate("/login");
   };
+if (loading) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-12 h-12 border-4 border-purple-700 border-t-transparent rounded-full animate-spin mx-auto"></div>
 
+        <p className="mt-4 text-gray-600">
+          Loading Profile...
+        </p>
+      </div>
+    </div>
+  );
+}
   return (
     <div className="min-h-screen bg-white">
       {/* Desktop Sidebar */}
@@ -83,7 +119,7 @@ const Profile = () => {
 
               <div>
                 <p className="text-sm text-gray-500">Full Name</p>
-                <h3 className="font-semibold text-gray-900">{user.name}</h3>
+                <h3 className="font-semibold text-gray-900">{user?.name}</h3>
               </div>
             </div>
 
@@ -94,7 +130,7 @@ const Profile = () => {
 
               <div>
                 <p className="text-sm text-gray-500">Email Address</p>
-                <h3 className="font-semibold text-gray-900">{user.email}</h3>
+                <h3 className="font-semibold text-gray-900">{user?.email}</h3>
               </div>
             </div>
           </div>
@@ -105,7 +141,7 @@ const Profile = () => {
             <div className="border border-gray-200 rounded-xl p-5 text-center">
               <Briefcase className="mx-auto text-purple-700 mb-2" />
 
-              <h2 className="text-2xl font-bold">{user.totalTrips}</h2>
+              <h2 className="text-2xl font-bold">{user?.totalTrips}</h2>
 
               <p className="text-gray-500 text-sm">Total Trips</p>
             </div>
@@ -113,7 +149,7 @@ const Profile = () => {
             <div className="border border-gray-200 rounded-xl p-5 text-center">
               <Bookmark className="mx-auto text-purple-700 mb-2" />
 
-              <h2 className="text-2xl font-bold">{user.upcomingTrips}</h2>
+              <h2 className="text-2xl font-bold">{user?.upcomingTrips}</h2>
 
               <p className="text-gray-500 text-sm">Upcoming Trips</p>
             </div>
@@ -127,7 +163,7 @@ const Profile = () => {
               disabled
             >
               <Pencil size={18} />
-              Edit Profile (Coming Soon)
+              Edit Profile
             </button>
 
             <button
@@ -135,7 +171,7 @@ const Profile = () => {
               disabled
             >
               <Lock size={18} />
-              Change Password (Coming Soon)
+              Change Password
             </button>
 
             <button

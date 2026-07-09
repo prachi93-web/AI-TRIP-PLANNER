@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import MobileNavbar from "../components/MobileNavbar";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-import {
-  ArrowLeft,
-  Trash2,
-  Calendar,
-  Clock,
-  IndianRupee,
-  ChevronDown,
-  ChevronUp,
-  Lightbulb,
-} from "lucide-react";
+import { ArrowLeft, Trash2, Calendar, Clock, IndianRupee, ChevronDown, ChevronUp, Lightbulb,} from "lucide-react";
 
 const TripDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [trip, setTrip] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,6 +38,32 @@ const TripDetails = () => {
       toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  };
+  const deleteTrip = async () => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/trip/delete`,
+        {
+          id,
+        },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        },
+      );
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+
+        navigate("/my-trips");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
@@ -94,7 +111,10 @@ const TripDetails = () => {
             Back
           </Link>
 
-          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition">
+          <button
+            onClick={deleteTrip}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition"
+          >
             <Trash2 size={17} />
             Delete Trip
           </button>

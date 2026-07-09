@@ -1,6 +1,7 @@
 import destinationModel from "../models/destinationModel.js";
 import tripModel from "../models/tripModel.js";
 import { generateTripPlan } from "../services/geminiServices.js";
+import userModel from "../models/userModel.js";
 
 const generateTrip = async (req, res) => {
     try {
@@ -121,4 +122,27 @@ const searchDestination = async (req,res) => {
     }
 }
 
-export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination };
+const getProfileData = async (req, res) => {
+    try {
+
+        const userId = req.userId;
+        const user = await userModel.findById(userId).select("name email");
+
+        if (!user) {
+            return res.json({success: false, message: "User not found"});
+        }
+
+        const trips = await tripModel.find({ userId });
+        const totalTrips = trips.length;
+
+        const upcomingTrips = trips.filter(trip => new Date(trip.startDate) >= new Date()).length;
+
+        res.json({success: true,profile: {name: user.name,email: user.email,totalTrips,upcomingTrips}});
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message});
+    }
+};
+
+export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination, getProfileData };
