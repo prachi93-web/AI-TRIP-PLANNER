@@ -5,9 +5,10 @@ import { generateTripPlan } from "../services/geminiServices.js";
 const generateTrip = async (req, res) => {
     try {
 
-        const { userId, destination, days, budget, interests } = req.body;
+        const { destination, startDate, days, budget, interests } = req.body;
+        const userId = req.userId;
 
-        if (!destination || !days || !budget || !interests || interests.length === 0) {
+        if (!destination || !startDate || !days || !budget || !interests || interests.length === 0) {
             return res.json({success: false, message: "All fields are required"});
         }
         const destinationData = await destinationModel.findOne({
@@ -22,6 +23,7 @@ const generateTrip = async (req, res) => {
         // Generate AI Plan
         const aiPlan = await generateTripPlan({
             destination,
+            startDate,
             days,
             budget,
             interests
@@ -31,6 +33,7 @@ const generateTrip = async (req, res) => {
             userId,
             destination,
             image,
+            startDate,
             days,
             budget,
             interests,

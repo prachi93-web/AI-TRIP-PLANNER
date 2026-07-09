@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import MobileNavbar from "../components/MobileNavbar";
 import { Sparkles, Calendar, ChevronDown } from "lucide-react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const interestOptions = [
   "Beaches",
@@ -15,6 +18,12 @@ const interestOptions = [
 ];
 
 const CreateTrip = () => {
+  const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [destinations, setDestinations] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const [formData, setFormData] = useState({
     destination: "",
     days: "",
@@ -23,13 +32,43 @@ const CreateTrip = () => {
   });
 
   const [selectedInterests, setSelectedInterests] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    if (name === "destination") {
+      if (value.trim() === "") {
+        setDestinations([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/trip/search`,
+          {
+            keyword: value,
+          },
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+            },
+          },
+        );
+
+        if (response.data.success) {
+          setDestinations(response.data.destinations);
+          setShowSuggestions(response.data.destinations.length > 0);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   const addInterest = (interest) => {
@@ -42,15 +81,52 @@ const CreateTrip = () => {
     setSelectedInterests(selectedInterests.filter((item) => item !== interest));
   };
 
-  const handleSubmit = (e) => {
+  const selectDestination = (destination) => {
+    setFormData((prev) => ({
+      ...prev,
+      destination: destination.name,
+    }));
+
+    setShowSuggestions(false);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log({
-      ...formData,
-      interests: selectedInterests,
-    });
+    try {
+      setLoading(true);
 
-    // Generate Trip API
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/trip/generate`,
+        {
+          destination: formData.destination,
+          startDate: formData.startDate,
+          days: Number(formData.days),
+          budget: Number(formData.budget),
+          interests: selectedInterests,
+        },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        },
+      );
+
+      if (response.data.success) {
+        console.log(response.data.trip);
+        toast.success(response.data.message);
+
+        navigate(`/trip/${response.data.trip._id}`);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -92,14 +168,30 @@ const CreateTrip = () => {
                   Destination
                 </label>
 
-                <input
-                  type="text"
-                  name="destination"
-                  value={formData.destination}
-                  onChange={handleChange}
-                  placeholder="e.g. Goa, Manali, Bali"
-                  className="w-full h-12 px-4 rounded-xl border border-gray-300 outline-none focus:border-purple-600"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="destination"
+                    value={formData.destination}
+                    onChange={handleChange}
+                    placeholder="e.g. Goa, Manali, Bali"
+                    className="w-full h-12 px-4 rounded-xl border border-gray-300 outline-none focus:border-purple-600"
+                  />
+
+                  {showSuggestions && destinations.length > 0 && (
+                    <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 max-h-56 overflow-y-auto">
+                      {destinations.map((item) => (
+                        <div
+                          key={item._id}
+                          onClick={() => selectDestination(item)}
+                          className="px-4 py-3 hover:bg-purple-50 cursor-pointer"
+                        >
+                          {item.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -228,10 +320,20 @@ const CreateTrip = () => {
 
             <button
               type="submit"
-              className="w-full h-12 rounded-xl bg-purple-700 hover:bg-purple-800 transition text-white font-semibold flex items-center justify-center gap-2 shadow-md"
+              disabled={loading}
+              className="w-full h-12 rounded-xl bg-purple-700 hover:bg-purple-800 disabled:bg-purple-400 disabled:cursor-not-allowed transition text-white font-semibold flex items-center justify-center gap-2 shadow-md"
             >
-              <Sparkles size={18} />
-              Generate Trip Plan
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Generating Trip...
+                </>
+              ) : (
+                <>
+                  <Sparkles size={18} />
+                  Generate Trip Plan
+                </>
+              )}
             </button>
           </form>
         </div>

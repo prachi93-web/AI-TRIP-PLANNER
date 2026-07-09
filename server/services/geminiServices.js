@@ -2,6 +2,7 @@ import model from "../config/gemini.js";
 
 const generateTripPlan = async ({
     destination,
+    startDate,
     days,
     budget,
     interests
@@ -13,6 +14,7 @@ const generateTripPlan = async ({
 Generate a ${days}-day travel itinerary.
 
 Destination: ${destination}
+Travel Start Date: ${startDate}
 Maximum Budget: ₹${budget}
 Interests: ${interests.map(item => item.trim()).join(", ")}
 
