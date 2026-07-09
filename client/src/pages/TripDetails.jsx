@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import MobileNavbar from "../components/MobileNavbar";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 import {
   ArrowLeft,
   Trash2,
@@ -13,42 +16,55 @@ import {
   Lightbulb,
 } from "lucide-react";
 
-const trip = {
-  destination: "Goa, India",
-  image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-  date: "12 Jun - 15 Jun 2026",
-  days: 4,
-  budget: "₹20,000",
-  interests: ["Beaches", "Adventure", "Relaxation", "Food"],
-  itinerary: [
-    {
-      day: 1,
-      title: "Arrival in Goa",
-      description:
-        "Arrive in Goa, check-in at the hotel and relax at Baga Beach. Enjoy the sunset and local cuisine.",
-    },
-    {
-      day: 2,
-      title: "Water Sports",
-      description:
-        "Visit Fort Aguada, enjoy water sports, explore local markets and experience Goa's nightlife.",
-    },
-    {
-      day: 3,
-      title: "Sightseeing",
-      description:
-        "Visit Dudhsagar Falls, spice plantation and enjoy authentic Goan food.",
-    },
-    {
-      day: 4,
-      title: "Departure",
-      description: "Morning at Anjuna Beach, shopping and departure.",
-    },
-  ],
-};
-
 const TripDetails = () => {
+  const { id } = useParams();
+
+  const [trip, setTrip] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [openDay, setOpenDay] = useState(1);
+
+  const getTripDetails = async () => {
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/trip/tripDetails`,
+        { id },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
+        },
+      );
+
+      if (response.data.success) {
+        setTrip(response.data.trip);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getTripDetails();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-purple-700 border-t-transparent rounded-full animate-spin mx-auto"></div>
+
+          <p className="mt-5 text-gray-600">Loading trip details...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -64,7 +80,7 @@ const TripDetails = () => {
         <MobileNavbar />
       </div>
 
-      {/* Main Content */}
+      {/* Main */}
 
       <div className="lg:ml-64 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 pb-8">
         {/* Header */}
@@ -84,8 +100,6 @@ const TripDetails = () => {
           </button>
         </div>
 
-        {/* Content */}
-
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Left Card */}
 
@@ -101,10 +115,12 @@ const TripDetails = () => {
                 {trip.destination}
               </h1>
 
-              <div className="flex flex-wrap gap-4 mt-4 text-gray-500 text-sm">
+              <p className="text-gray-500 mt-2">{trip.aiPlan.summary}</p>
+
+              <div className="flex flex-wrap gap-4 mt-5 text-gray-500 text-sm">
                 <div className="flex items-center gap-1">
                   <Calendar size={16} />
-                  {trip.date}
+                  {new Date(trip.startDate).toLocaleDateString("en-GB")}
                 </div>
 
                 <div className="flex items-center gap-1">
@@ -113,8 +129,7 @@ const TripDetails = () => {
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <IndianRupee size={16} />
-                  {trip.budget}
+                  <IndianRupee size={16} />₹{trip.budget}
                 </div>
               </div>
 
@@ -122,12 +137,12 @@ const TripDetails = () => {
                 <h3 className="font-semibold text-gray-800 mb-3">Interests</h3>
 
                 <div className="flex flex-wrap gap-2">
-                  {trip.interests.map((item) => (
+                  {trip.interests.map((interest) => (
                     <span
-                      key={item}
+                      key={interest}
                       className="px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm"
                     >
-                      {item}
+                      {interest}
                     </span>
                   ))}
                 </div>
@@ -139,12 +154,16 @@ const TripDetails = () => {
 
           <div className="lg:col-span-3">
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
-              <h2 className="text-xl font-bold text-purple-700 mb-5">
-                ✨ AI Generated Plan
+              <h2 className="text-2xl font-bold text-purple-700">
+                {trip.aiPlan.tripTitle}
               </h2>
 
+              <p className="text-gray-500 mt-2 mb-6">
+                {trip.aiPlan.bestTimeToVisit}
+              </p>
+
               <div className="space-y-4">
-                {trip.itinerary.map((item) => (
+                {trip.aiPlan.itinerary.map((item) => (
                   <div
                     key={item.day}
                     className="border border-gray-200 rounded-xl overflow-hidden"
@@ -159,10 +178,6 @@ const TripDetails = () => {
                         <h3 className="font-semibold text-gray-900">
                           Day {item.day}
                         </h3>
-
-                        <p className="text-sm text-gray-500 mt-1">
-                          {item.title}
-                        </p>
                       </div>
 
                       {openDay === item.day ? (
@@ -173,8 +188,66 @@ const TripDetails = () => {
                     </button>
 
                     {openDay === item.day && (
-                      <div className="px-5 pb-5 text-gray-600 text-sm leading-7">
-                        {item.description}
+                      <div className="px-5 pb-5 space-y-6">
+                        {/* Morning */}
+
+                        <div>
+                          <h4 className="font-semibold text-purple-700">
+                            🌅 Morning
+                          </h4>
+
+                          <p className="font-medium mt-2">
+                            {item.morning.place}
+                          </p>
+
+                          <p className="text-gray-600 text-sm mt-1">
+                            {item.morning.activity}
+                          </p>
+
+                          <p className="text-sm text-green-600 mt-2">
+                            Approx Cost : ₹{item.morning.approximateCost}
+                          </p>
+                        </div>
+
+                        {/* Afternoon */}
+
+                        <div>
+                          <h4 className="font-semibold text-orange-600">
+                            ☀️ Afternoon
+                          </h4>
+
+                          <p className="font-medium mt-2">
+                            {item.afternoon.place}
+                          </p>
+
+                          <p className="text-gray-600 text-sm mt-1">
+                            {item.afternoon.activity}
+                          </p>
+
+                          <p className="text-sm text-green-600 mt-2">
+                            Approx Cost : ₹{item.afternoon.approximateCost}
+                          </p>
+                        </div>
+
+                        {/* Evening */}
+
+                        <div>
+                          <h4 className="font-semibold text-indigo-600">
+                            🌙 Evening
+                          </h4>
+
+                          <p className="font-medium mt-2">
+                            {item.evening.place}
+                          </p>
+
+                          <p className="text-gray-600 text-sm mt-1">
+                            {item.evening.activity}
+                          </p>
+
+                          <p className="text-sm text-green-600 mt-2">
+                            Approx Cost : ₹{item.evening.approximateCost}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -191,10 +264,9 @@ const TripDetails = () => {
                 </div>
 
                 <ul className="text-sm text-gray-600 space-y-2 list-disc ml-5">
-                  <li>Carry sunscreen and sunglasses.</li>
-                  <li>Keep your original ID proofs.</li>
-                  <li>Stay hydrated during sightseeing.</li>
-                  <li>Carry some cash for local markets.</li>
+                  {trip.aiPlan.travelTips.map((tip, index) => (
+                    <li key={index}>{tip}</li>
+                  ))}
                 </ul>
               </div>
             </div>
