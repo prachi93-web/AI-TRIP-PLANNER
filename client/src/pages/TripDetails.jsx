@@ -4,7 +4,16 @@ import Sidebar from "../components/Sidebar";
 import MobileNavbar from "../components/MobileNavbar";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { ArrowLeft, Trash2, Calendar, Clock, IndianRupee, ChevronDown, ChevronUp, Lightbulb,} from "lucide-react";
+import {
+  ArrowLeft,
+  Trash2,
+  Calendar,
+  Clock,
+  IndianRupee,
+  ChevronDown,
+  ChevronUp,
+  Lightbulb,
+} from "lucide-react";
 
 const TripDetails = () => {
   const { id } = useParams();
@@ -196,7 +205,7 @@ const TripDetails = () => {
                     >
                       <div className="text-left">
                         <h3 className="font-semibold text-gray-900">
-                          Day {item.day}
+                          {item.day}
                         </h3>
                       </div>
 

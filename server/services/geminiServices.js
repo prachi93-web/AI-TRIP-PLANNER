@@ -5,7 +5,8 @@ const generateTripPlan = async ({
     startDate,
     days,
     budget,
-    interests
+    interests,
+    language
 }) => {
 
     try {
@@ -17,6 +18,22 @@ Destination: ${destination}
 Travel Start Date: ${startDate}
 Maximum Budget: ₹${budget}
 Interests: ${interests.map(item => item.trim()).join(", ")}
+Language: ${language}
+
+Generate the entire itinerary in ${language} language.
+
+All text including:
+- tripTitle
+- summary
+- bestTimeToVisit
+- travelTips
+- place names (if local translation exists)
+- activities
+
+must be written in ${language}.
+
+Keep the JSON keys in English.
+Only the values should be translated.
 
 The itinerary should stay within the given budget.
 
@@ -28,10 +45,43 @@ The JSON object must contain the following fields:
 - itinerary (array)
 
 Each itinerary day must contain:
+
 - day
 - morning
 - afternoon
 - evening
+
+The "day" field MUST be a translated string, NOT just a number.
+
+Examples:
+
+English:
+"Day 1"
+
+Hindi:
+"दिन 1"
+
+Marathi:
+"दिवस 1"
+
+Kannada:
+"ದಿನ 1"
+
+Malayalam:
+"ദിവസം 1"
+
+Tamil:
+"நாள் 1"
+
+Telugu:
+"రోజు 1"
+
+Never return:
+"1"
+"2"
+"3"
+
+Always include the translated word for "Day".
 
 Each section should include:
 - place

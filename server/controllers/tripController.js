@@ -6,7 +6,7 @@ import userModel from "../models/userModel.js";
 const generateTrip = async (req, res) => {
     try {
 
-        const { destination, startDate, days, budget, interests } = req.body;
+        const { destination, startDate, days, budget, interests, language } = req.body;
         const userId = req.userId;
 
         if (!destination || !startDate || !days || !budget || !interests || interests.length === 0) {
@@ -27,7 +27,8 @@ const generateTrip = async (req, res) => {
             startDate,
             days,
             budget,
-            interests
+            interests,
+            language
         });
 
         const newTrip = new tripModel({
@@ -38,6 +39,7 @@ const generateTrip = async (req, res) => {
             days,
             budget,
             interests,
+            language,
             aiPlan
         });
         const trip = await newTrip.save();

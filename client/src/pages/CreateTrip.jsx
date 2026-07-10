@@ -24,11 +24,24 @@ const CreateTrip = () => {
   const [destinations, setDestinations] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
+  const languageOptions = [
+    "English",
+    "Hindi",
+    "Marathi",
+    "Gujarati",
+    "Tamil",
+    "Telugu",
+    "Kannada",
+    "Malayalam",
+    "Bengali",
+  ];
+
   const [formData, setFormData] = useState({
     destination: "",
     days: "",
     budget: "",
     startDate: "",
+    language: "English",
   });
 
   const [selectedInterests, setSelectedInterests] = useState([]);
@@ -104,6 +117,7 @@ const CreateTrip = () => {
           days: Number(formData.days),
           budget: Number(formData.budget),
           interests: selectedInterests,
+          language: formData.language,
         },
         {
           headers: {
@@ -252,67 +266,87 @@ const CreateTrip = () => {
 
             {/* Interests */}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Interests
-              </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Interests
+                </label>
 
-              <div className="relative">
-                <div
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="min-h-14 border border-gray-300 rounded-xl p-3 flex flex-wrap gap-2 items-center cursor-pointer"
-                >
-                  {selectedInterests.length === 0 ? (
-                    <span className="text-gray-400 text-sm">
-                      Select Interests
-                    </span>
-                  ) : (
-                    selectedInterests.map((interest) => (
-                      <div
-                        key={interest}
-                        className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
-                      >
-                        {interest}
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeInterest(interest);
-                          }}
-                          className="font-bold hover:text-red-500"
+                <div className="relative">
+                  <div
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="min-h-14 border border-gray-300 rounded-xl p-3 flex flex-wrap gap-2 items-center cursor-pointer"
+                  >
+                    {selectedInterests.length === 0 ? (
+                      <span className="text-gray-400 text-sm">
+                        Select Interests
+                      </span>
+                    ) : (
+                      selectedInterests.map((interest) => (
+                        <div
+                          key={interest}
+                          className="flex items-center gap-2 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
                         >
-                          ×
-                        </button>
-                      </div>
-                    ))
-                  )}
+                          {interest}
 
-                  <ChevronDown
-                    size={18}
-                    className={`ml-auto transition-transform ${
-                      showDropdown ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeInterest(interest);
+                            }}
+                            className="font-bold hover:text-red-500"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))
+                    )}
 
-                {showDropdown && (
-                  <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-20 max-h-56 overflow-y-auto">
-                    {interestOptions.map((interest) => (
-                      <div
-                        key={interest}
-                        onClick={() => addInterest(interest)}
-                        className={`px-4 py-3 cursor-pointer transition ${
-                          selectedInterests.includes(interest)
-                            ? "bg-purple-50 text-purple-700 font-medium"
-                            : "hover:bg-purple-50"
-                        }`}
-                      >
-                        {interest}
-                      </div>
-                    ))}
+                    <ChevronDown
+                      size={18}
+                      className={`ml-auto transition-transform ${
+                        showDropdown ? "rotate-180" : ""
+                      }`}
+                    />
                   </div>
-                )}
+
+                  {showDropdown && (
+                    <div className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-20 max-h-56 overflow-y-auto">
+                      {interestOptions.map((interest) => (
+                        <div
+                          key={interest}
+                          onClick={() => addInterest(interest)}
+                          className={`px-4 py-3 cursor-pointer transition ${
+                            selectedInterests.includes(interest)
+                              ? "bg-purple-50 text-purple-700 font-medium"
+                              : "hover:bg-purple-50"
+                          }`}
+                        >
+                          {interest}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Response Language
+                </label>
+
+                <select
+                  name="language"
+                  value={formData.language}
+                  onChange={handleChange}
+                  className="w-full h-14 px-4 rounded-xl border border-gray-300 outline-none focus:border-purple-600"
+                >
+                  {languageOptions.map((language) => (
+                    <option key={language} value={language}>
+                      {language}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
