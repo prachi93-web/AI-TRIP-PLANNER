@@ -16,10 +16,7 @@ const generateTrip = async (req, res) => {
             name: destination
         });
 
-        if (!destinationData) {
-            return res.json({success: false, message: "Destination not found"});
-        }
-        const image = destinationData.image;
+        const image = destinationData ? destinationData.image : process.env.DEFAULT_TRIP_IMAGE;
 
         // Generate AI Plan
         const aiPlan = await generateTripPlan({

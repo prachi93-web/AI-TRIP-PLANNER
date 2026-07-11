@@ -7,13 +7,30 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const interestOptions = [
-  "Beaches",
   "Adventure",
+  "Beaches",
+  "Backwaters",
+  "Camping",
   "Culture",
+  "Desert",
   "Food",
+  "Heritage",
+  "Hill Stations",
+  "History",
+  "Honeymoon",
+  "Lakes",
   "Mountains",
   "Nature",
+  "Nightlife",
+  "Photography",
+  "Pilgrimage",
+  "Relaxation",
+  "Road Trips",
   "Shopping",
+  "Snow",
+  "Spiritual",
+  "Trekking",
+  "Water Sports",
   "Wildlife",
 ];
 

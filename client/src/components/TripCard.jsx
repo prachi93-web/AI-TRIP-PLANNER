@@ -7,7 +7,7 @@ const TripCard = ({ image, destination, days, date, onView, isSample }) => {
       {/* Image */}
 
       <div className="relative">
-        <img src={image} alt={destination} className="w-full h-56 object-cover object-center"/>
+        <img src={image} alt={destination} className="w-full h-56 lg:h-64 object-cover object-center"/>
 
         {isSample && (
           <span className="absolute top-3 right-3 bg-white text-purple-700 border border-purple-800 text-xs font-semibold px-3 py-1 rounded-sm shadow-sm">Sample</span>
