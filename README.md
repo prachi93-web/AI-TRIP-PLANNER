@@ -40,10 +40,3 @@ npm install
 npm run dev
 ```
 
-## 📸 Screenshots
-
-_Add project screenshots here._
-
-## 👩‍💻 Developed By
-
-**Prachi Mehetre**
