@@ -40,6 +40,7 @@ const generateTrip = async (req, res) => {
             budget,
             interests,
             language,
+            isSample: false,
             aiPlan
         });
         const trip = await newTrip.save();
@@ -57,7 +58,7 @@ const getMyTrips = async (req,res) => {
     
         const userId = req.userId;
 
-        const trips = await tripModel.find({userId}).sort({ _id: -1 });
+        const trips = await tripModel.find({ $or: [{ userId },{ isSample: true }]}).sort({isSample: 1,_id: -1});
         res.json({success: true, trips})
 
     } catch (error) {
@@ -76,6 +77,9 @@ const deleteTrip = async (req,res) => {
         if (!trip) {
             return res.json({success: false, message:"Trip not Found"});
         }
+        if (trip.isSample) {
+            return res.json({ success: false,message: "Sample trips cannot be deleted"});
+        }
         await trip.deleteOne();
         res.json({success: true, message:"Trip Deleted Successfully"})
 
@@ -91,7 +95,7 @@ const singleTrip = async (req, res) => {
         const userId = req.userId;
         const { id } = req.body;
 
-        const trip = await tripModel.findOne({_id: id,userId});
+        const trip = await tripModel.findOne({_id: id, $or: [{ userId },{ isSample: true }]});
         if (!trip) {
             return res.json({success: false, message:"Trip not found"});
         }

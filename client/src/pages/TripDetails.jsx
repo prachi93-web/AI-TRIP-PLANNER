@@ -4,16 +4,7 @@ import Sidebar from "../components/Sidebar";
 import MobileNavbar from "../components/MobileNavbar";
 import axios from "axios";
 import { toast } from "react-toastify";
-import {
-  ArrowLeft,
-  Trash2,
-  Calendar,
-  Clock,
-  IndianRupee,
-  ChevronDown,
-  ChevronUp,
-  Lightbulb,
-} from "lucide-react";
+import { ArrowLeft, Trash2, Calendar, Clock, IndianRupee, ChevronDown, ChevronUp, Lightbulb,} from "lucide-react";
 
 const TripDetails = () => {
   const { id } = useParams();
@@ -120,13 +111,8 @@ const TripDetails = () => {
             Back
           </Link>
 
-          <button
-            onClick={deleteTrip}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition"
-          >
-            <Trash2 size={17} />
-            Delete Trip
-          </button>
+          {!trip.isSample && (
+        <button onClick={deleteTrip} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition"><Trash2 size={17} /> Delete Trip</button>)}
         </div>
 
         <div className="grid lg:grid-cols-5 gap-8">
@@ -135,11 +121,12 @@ const TripDetails = () => {
           <div className="lg:col-span-2">
             <div className="lg:sticky lg:top-8">
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-              <img
-                src={trip.image}
-                alt={trip.destination}
-                className="w-full h-64 object-cover rounded-xl"
-              />
+              <div className="relative">
+                <img src={trip.image} alt={trip.destination} className="w-full h-64 object-cover rounded-xl"/>
+                  {trip.isSample && (
+                    <span className="absolute top-3 right-3 bg-white border border-purple-300 text-purple-700 text-xs font-semibold px-3 py-1 rounded-full shadow-sm">Sample</span>
+                  )}
+              </div>
 
               <h1 className="text-3xl font-bold text-gray-900 mt-5">
                 {trip.destination}

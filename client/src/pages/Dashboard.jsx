@@ -21,6 +21,10 @@ const Dashboard = () => {
         .join("")
         .toUpperCase()
     : "";
+  const userTrips = trips.filter((trip) => !trip.isSample);
+  const sampleTrips = trips.filter((trip) => trip.isSample);
+
+  const dashboardTrips = userTrips.length === 0 ? sampleTrips.slice(0, 4) : userTrips.slice(0, 4);
 
   const getTrips = async () => {
     try {
@@ -131,7 +135,9 @@ const Dashboard = () => {
             <div>
               <p className="text-xs lg:text-sm text-gray-500">Total Trips</p>
 
-              <h2 className="text-xl lg:text-3xl font-bold">{trips.length}</h2>
+              <h2 className="text-xl lg:text-3xl font-bold">
+                {userTrips.length}
+              </h2>
             </div>
           </div>
 
@@ -146,7 +152,7 @@ const Dashboard = () => {
               <p className="text-xs lg:text-sm text-gray-500">Places Visited</p>
 
               <h2 className="text-xl lg:text-3xl font-bold">
-                {new Set(trips.map((trip) => trip.destination)).size}
+                {new Set(userTrips.map((trip) => trip.destination)).size}
               </h2>
             </div>
           </div>
@@ -162,7 +168,7 @@ const Dashboard = () => {
               <p className="text-xs lg:text-sm text-gray-500">Days Planned</p>
 
               <h2 className="text-xl lg:text-3xl font-bold">
-                {trips.reduce((total, trip) => total + trip.days, 0)}
+                {userTrips.reduce((total, trip) => total + trip.days, 0)}
               </h2>
             </div>
           </div>
@@ -179,8 +185,7 @@ const Dashboard = () => {
 
               <h2 className="text-xl lg:text-3xl font-bold">
                 {
-                  trips.filter((trip) => new Date(trip.startDate) >= new Date())
-                    .length
+                  userTrips.filter((trip) => new Date(trip.startDate) >= new Date(),).length
                 }
               </h2>
             </div>
@@ -190,43 +195,32 @@ const Dashboard = () => {
         {/* Upcoming Trips Heading */}
 
         <div className="flex justify-between items-center mt-10 mb-6">
-          <h2 className="text-xl sm:text-2xl font-bold">Latest Trips</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">
+            {userTrips.length === 0 ? "Discover Destinations" : "Latest Trips"}
+          </h2>
 
           <button
             onClick={() => navigate("/my-trips")}
             className="text-purple-700 text-sm font-medium hover:underline"
           >
-            View All
+            {userTrips.length === 0 ? "Explore More" : "View All"}
           </button>
         </div>
 
         {/* Trip Cards */}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {trips.length === 0 ? (
-            <div className="col-span-2 bg-white rounded-2xl p-10 text-center shadow-sm">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                No Trips Yet
-              </h2>
-
-              <p className="text-gray-500 mt-2">
-                Create your first AI trip to see it here.
-              </p>
-            </div>
-          ) : (
-            trips
-              .slice(0, 2)
-              .map((trip) => (
-                <TripCard
-                  key={trip._id}
-                  image={trip.image}
-                  destination={trip.destination}
-                  days={trip.days}
-                  date={new Date(trip.startDate).toLocaleDateString("en-GB")}
-                  onView={() => navigate(`/trip/${trip._id}`)}
-                />
-              ))
-          )}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6">
+          {dashboardTrips.map((trip) => (
+            <TripCard
+              key={trip._id}
+              image={trip.image}
+              destination={trip.destination}
+              days={trip.days}
+              date={new Date(trip.startDate).toLocaleDateString("en-GB")}
+              isSample={trip.isSample}
+              onView={() => navigate(`/trip/${trip._id}`)}
+            />
+          ))}
         </div>
       </div>
     </div>
