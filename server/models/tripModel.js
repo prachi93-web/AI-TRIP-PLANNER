@@ -12,6 +12,7 @@ const tripSchema = new mongoose.Schema({
     aiPlan: { type: Object, required: true },
     isSample: { type: Boolean, default: false },
     language: { type: String, required: true},
+    photos: { type: [String], default: []}
 });
 
 const tripModel = mongoose.models.trip || mongoose.model("trip", tripSchema);

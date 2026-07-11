@@ -4,6 +4,7 @@ import 'dotenv/config'
 import connectDB from './config/mongodb.js'
 import userRouter from './routes/userRoute.js';
 import tripRouter from './routes/tripRoute.js';
+import cloudinary from "./config/cloudinary.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;

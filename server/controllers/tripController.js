@@ -50,6 +50,38 @@ const generateTrip = async (req, res) => {
     }
 }
 
+//upload photos api
+const uploadTripPhotos = async (req, res) => {
+  try {
+    console.log("========== Upload API ==========");
+    console.log("UserId:", req.userId);
+    console.log("Body:", req.body);
+    console.log("Files:", req.files);
+    const userId = req.userId;
+    const { tripId } = req.body;
+
+    const trip = await tripModel.findOne({_id: tripId,userId });
+
+    if (!trip) {
+      return res.json({ success: false, message: "Trip not found" });
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.json({ success: false, message: "Please upload at least one image"});
+    }
+
+    const imageUrls = req.files.map(file => file.path);
+
+    trip.photos.push(...imageUrls);
+    await trip.save();
+    res.json({ success: true, message: "Photos uploaded successfully", photos: trip.photos});
+
+  } catch (error) {
+    console.log(error);
+    res.json({success: false, message: error.message });
+  }
+};
+
 const getMyTrips = async (req,res) => {
     try {
     
@@ -148,4 +180,4 @@ const getProfileData = async (req, res) => {
     }
 };
 
-export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination, getProfileData };
+export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination, getProfileData, uploadTripPhotos };
