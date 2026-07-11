@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const tripSchema = new mongoose.Schema({
 
-    userId: {type: String, required: true},
+    userId: {type: String, default: null},
     destination: {type: String, required: true},
     image: {type: String, required: true},
     startDate: {type: Date, required: true},
@@ -10,6 +10,7 @@ const tripSchema = new mongoose.Schema({
     budget: {type: Number, required: true},
     interests: {type: [String], required: true},
     aiPlan: { type: Object, required: true },
+    isSample: { type: Boolean, default: false },
     language: { type: String, required: true},
 });
 
