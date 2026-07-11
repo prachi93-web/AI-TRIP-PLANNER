@@ -5,6 +5,7 @@ import MobileNavbar from "../components/MobileNavbar";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ArrowLeft, Trash2, Calendar, Clock, IndianRupee, ChevronDown, ChevronUp, Lightbulb,} from "lucide-react";
+import TripMemories from "../components/TripMemories";
 
 const TripDetails = () => {
   const { id } = useParams();
@@ -99,7 +100,7 @@ const TripDetails = () => {
 
       {/* Main */}
 
-      <div className="lg:ml-64 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 lg:h-screen lg:overflow-hidden pb-8">
+      <div className="lg:ml-64 pt-20 lg:pt-8 px-4 sm:px-6 lg:px-10 pb-8">
         {/* Header */}
 
         <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
@@ -118,9 +119,9 @@ const TripDetails = () => {
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Left Card */}
 
-          <div className="lg:col-span-2">
-            <div className="lg:sticky lg:top-8">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+          <div className="lg:col-span-2 flex">
+            <div className="lg:sticky lg:top-8 w-full">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 h-full flex flex-col">
               <div className="relative">
                 <img src={trip.image} alt={trip.destination} className="w-full h-64 object-cover rounded-xl"/>
                   {trip.isSample && (
@@ -171,7 +172,7 @@ const TripDetails = () => {
           {/* Right Card */}
 
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 lg:h-[calc(100vh-8rem)] lg:overflow-y-auto">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 h-full">
               <h2 className="text-2xl font-bold text-purple-700">
                 {trip.aiPlan.tripTitle}
               </h2>
@@ -289,6 +290,9 @@ const TripDetails = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="mt-10">
+          {!trip.isSample && (<TripMemories trip={trip} refreshTrip={getTripDetails}/>)}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import destinationModel from "../models/destinationModel.js";
 import tripModel from "../models/tripModel.js";
 import { generateTripPlan } from "../services/geminiServices.js";
 import userModel from "../models/userModel.js";
+import cloudinary from "../config/cloudinary.js";
 
 const generateTrip = async (req, res) => {
     try {
@@ -53,10 +54,6 @@ const generateTrip = async (req, res) => {
 //upload photos api
 const uploadTripPhotos = async (req, res) => {
   try {
-    console.log("========== Upload API ==========");
-    console.log("UserId:", req.userId);
-    console.log("Body:", req.body);
-    console.log("Files:", req.files);
     const userId = req.userId;
     const { tripId } = req.body;
 
@@ -64,6 +61,17 @@ const uploadTripPhotos = async (req, res) => {
 
     if (!trip) {
       return res.json({ success: false, message: "Trip not found" });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tripStartDate = new Date(trip.startDate);
+    tripStartDate.setHours(0, 0, 0, 0);
+
+    if (today < tripStartDate) 
+    {
+        return res.json({success: false, message: "You can upload memories after your trip starts."});
     }
 
     if (!req.files || req.files.length === 0) {
@@ -80,6 +88,33 @@ const uploadTripPhotos = async (req, res) => {
     console.log(error);
     res.json({success: false, message: error.message });
   }
+};
+
+//delete photos api from trip
+const deleteTripPhotos = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { tripId, photoUrl } = req.body;
+
+        const trip = await tripModel.findOne({_id: tripId,userId,});
+
+        if (!trip) {
+            return res.json({ success: false, message: "Trip not found"});
+        }
+
+        const publicId = photoUrl.split("/").slice(-2).join("/").split(".")[0];
+        await cloudinary.uploader.destroy(publicId);
+
+        trip.photos = trip.photos.filter((photo) => photo !== photoUrl);
+
+        await trip.save();
+
+        res.json({ success: true, message:"Photo deleted successfully", photos: trip.photos});
+
+    } catch (error) {
+        console.log(error);
+        res.json({success: false, message: error.message });
+    }
 };
 
 const getMyTrips = async (req,res) => {
@@ -180,4 +215,4 @@ const getProfileData = async (req, res) => {
     }
 };
 
-export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination, getProfileData, uploadTripPhotos };
+export { generateTrip, getMyTrips, deleteTrip, singleTrip, searchDestination, getProfileData, uploadTripPhotos, deleteTripPhotos };
