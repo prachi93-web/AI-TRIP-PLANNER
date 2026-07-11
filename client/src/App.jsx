@@ -11,6 +11,7 @@ import Profile from './pages/Profile'
 import ProtectedRoute from './components/ProtectedRoute'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import VerifyOtp from './pages/VerifyOtp'
 
 const App = () => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -21,6 +22,7 @@ const App = () => {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
+      <Route path="/verify-otp" element={<VerifyOtp />} />
       <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path='/create-trip' element={<ProtectedRoute><CreateTrip /></ProtectedRoute>} />
       <Route path='/my-trips' element={<ProtectedRoute><MyTrips /></ProtectedRoute>} />

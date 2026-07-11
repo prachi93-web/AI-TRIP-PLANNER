@@ -36,21 +36,13 @@ const Register = () => {
       );
 
       if (response.data.success) {
-        // Save JWT Token
-        localStorage.setItem("token", response.data.token);
+        toast.success(response.data.message);
 
-        // Success Toast
-        toast.success("Registration Successful!");
-
-        // Clear Form
-        setFormData({
-          name: "",
-          email: "",
-          password: "",
+        navigate("/verify-otp", {
+          state: {
+            email: formData.email,
+          },
         });
-
-        // Redirect
-        navigate("/dashboard");
       } else {
         toast.error(response.data.message);
       }
